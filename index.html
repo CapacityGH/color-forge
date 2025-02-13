@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="css/style.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+            rel="stylesheet"
+        />
+        <title>Random Color Generator</title>
+    </head>
+    <body>
+        <div class="container">
+            <header class="header">
+                <div class="header__first-row">
+                    <h2 class="title">Random Color Generator</h2>
+                    <select id="languages">
+                        <option value="english">EN</option>
+                        <option value="russian">RU</option>
+                        <option value="ukrainian">UA</option>
+                    </select>
+                </div>
+                <div class="title-love-box">
+                    <h3 class="title-love">Made with ❤️ by Capacity</h3>
+                </div>
+            </header>
+
+            <article class="selecting-menu">
+                <div class="color-model-box">
+                    <label
+                        class="color-model-title second-title"
+                        for="color-models"
+                        >Color Model</label
+                    >
+                    <select id="color-models">
+                        <option value="" disabled selected>
+                            What color model would you like to choose?
+                        </option>
+                        <option value="rgb">RGB</option>
+                        <option value="hex">HEX</option>
+                        <option value="hsl">HSL</option>
+                    </select>
+                </div>
+
+                <div class="colors-number-box">
+                    <h3 class="colors-number-title second-title">
+                        Number Of Colors
+                    </h3>
+                    <input
+                        class="colors-number-input"
+                        type="number"
+                        id="numberInput"
+                        name="numberInput"
+                        min="1"
+                        max="100"
+                        placeholder="Choose a number between 1 and 100"
+                    />
+                </div>
+            </article>
+
+            <article class="buttons">
+                <button class="generate-btn btn">Generate</button>
+                <button class="reset-btn btn">Reset</button>
+                <button class="save-txt-btn btn">Save as TXT</button>
+            </article>
+
+            <article class="generated-colors-box"></article>
+        </div>
+
+        <script src="js/script.js"></script>
+    </body>
+</html>
