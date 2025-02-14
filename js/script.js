@@ -1,7 +1,5 @@
 "use strict";
 
-// TODO: make 2 functions(getRGBColorsList and getHexColorsList) in 1 (getColorsList)
-
 const generateBtn = document.querySelector(".generate-btn");
 const resetBtn = document.querySelector(".reset-btn");
 const generatedColorsBox = document.querySelector(".generated-colors-box");
@@ -10,9 +8,9 @@ const colorModels = document.getElementById("color-models");
 
 const numberOfColors = document.getElementById("numberInput");
 
-let rgbColorsList = [];
-let hexColorsList = [];
-// let hslColorsList = [];
+let rgbColorsArray = [];
+let hexColorsArray = [];
+let hslColorsArray = [];
 
 function getRandomNum(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -21,28 +19,28 @@ function getRandomNum(min, max) {
 function generateColorsBoxes() {
     generatedColorsBox.innerHTML = "";
     const colorsNumber = getColorsNumber();
+    const colorModel = colorModels.value;
 
-    if (colorModels.value == "rgb") {
-        rgbColorsList = [];
-        getRGBColorsList(colorsNumber);
+    const colorArrays = {
+        rgb: rgbColorsArray,
+        hex: hexColorsArray,
+        hsl: hslColorsArray,
+    };
+    const selectedArray = colorArrays[colorModel];
 
-        addColorsToBoxToHTML(rgbColorsList, colorsNumber);
-    } else if (colorModels.value == "hex") {
-        hexColorsList = [];
-        getHexColorsList(colorsNumber);
-
-        addColorsToBoxToHTML(hexColorsList, colorsNumber);
-    }
+    resetColorsArray(selectedArray);
+    getColorsArray(selectedArray, colorModel, colorsNumber);
+    addColorsToBoxToHTML(selectedArray, colorsNumber);
 }
 
-function addColorsToBoxToHTML(colorsList, colorsNumber) {
+function addColorsToBoxToHTML(colorsArray, colorsNumber) {
     for (let i = 0; i < colorsNumber; i++) {
         const colorBox = document.createElement("div");
 
         colorBox.classList.add("box");
         colorBox.classList.add(`box-${i}`);
-        colorBox.style.backgroundColor = colorsList[i];
-        colorBox.textContent = colorsList[i];
+        colorBox.style.backgroundColor = colorsArray[i];
+        colorBox.textContent = colorsArray[i];
 
         generatedColorsBox.appendChild(colorBox);
     }
@@ -59,11 +57,24 @@ function getRandomRGBColor() {
     )}, ${getRandomNum(0, 255)})`;
 }
 
-function getRGBColorsList(colorsNumber) {
-    for (let i = 0; i < colorsNumber; i++) {
-        rgbColorsList.push(getRandomRGBColor());
+function getColorsArray(colorsArray, colorModel, colorsNumber) {
+    let getColorFunction;
+
+    if (colorModel === "rgb") {
+        getColorFunction = getRandomRGBColor;
+    } else if (colorModel === "hex") {
+        getColorFunction = getRandomHexColor;
+    } else if (colorModel === "hsl") {
+        getColorFunction = getRandomHSLColor;
+    } else {
+        console.error("Invalid color model selected");
+        return;
     }
-    return rgbColorsList;
+
+    for (let i = 0; i < colorsNumber; i++) {
+        colorsArray.push(getColorFunction());
+    }
+    return colorsArray;
 }
 
 function getBlobURL(array) {
@@ -72,24 +83,41 @@ function getBlobURL(array) {
     return blobURL;
 }
 
-function getRandomHexColor() {
-    let hexNumber = [];
-    for (let i = 0; i < 6; i++) {
-        hexNumber.push(
-            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, "a", "b", "c", "d", "e", "f"][
-                Math.floor(Math.random() * 16)
-            ]
-        );
+function saveColorsToFile(colorsArray) {
+    if (colorsArray.length >= 1) {
+        const a = document.createElement("a");
+        a.href = getBlobURL(colorsArray);
+        a.download = "colors.txt";
+        a.click();
+    } else {
+        alert("There is no colors in array!");
     }
-    const fullHexNumber = `#${hexNumber.join("")}`;
+}
+
+function getRandomHexColor() {
+    let hexNumber = "";
+    for (let i = 0; i < 6; i++) {
+        hexNumber += `0123456789abcdef`[Math.floor(Math.random() * 16)];
+    }
+    const fullHexNumber = `#${hexNumber}`;
     return fullHexNumber;
 }
 
-function getHexColorsList(colorsNumber) {
-    for (let i = 0; i < colorsNumber; i++) {
-        hexColorsList.push(getRandomHexColor());
-    }
-    return hexColorsList;
+function getRandomHSLColor() {
+    return `hsl(${getRandomNum(0, 360)}, ${getRandomNum(
+        0,
+        100
+    )}%, ${getRandomNum(0, 100)}%)`;
+}
+
+function resetColorsArray(colorArray) {
+    colorArray.length = 0;
+}
+
+function resetAllColorsArrays() {
+    rgbColorsArray = [];
+    hexColorsArray = [];
+    hslColorsArray = [];
 }
 
 // Generate Button Logic
@@ -100,17 +128,17 @@ generateBtn.addEventListener("click", function () {
 // Reset Button Logic
 resetBtn.addEventListener("click", function () {
     generatedColorsBox.innerHTML = "";
+    resetAllColorsArrays();
 });
 
 // Save As TXT Button Logic
 saveButton.addEventListener("click", function () {
-    if (rgbColorsList.length >= 1) {
-        const a = document.createElement("a");
-        a.href = getBlobURL(rgbColorsList);
-        a.download = "rbg-colors.txt";
-        a.click();
-    } else {
-        alert("There is no colors in array!");
+    if (colorModels.value == "rgb") {
+        saveColorsToFile(rgbColorsArray);
+    } else if (colorModels.value == "hex") {
+        saveColorsToFile(hexColorsArray);
+    } else if (colorModels.value == "hsl") {
+        saveColorsToFile(hslColorsArray);
     }
 });
 
